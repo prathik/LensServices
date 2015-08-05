@@ -34,6 +34,10 @@ httpResponse CurlWrapper::base(std::string url,
 		if(type == "POST") {
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDS,
 							this->buildPayloadString(data).c_str());
+		} else if(type == "PUT" || type == "DELETE") {
+			curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, type.c_str());
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS,
+					this->buildPayloadString(data).c_str());
 		}
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response.data);
@@ -53,5 +57,15 @@ httpResponse CurlWrapper::get(std::string url) {
 httpResponse CurlWrapper::post(std::string url,
 		std::map<string, string> data) {
 	return this->base(url, &data, "POST");
+}
+
+httpResponse CurlWrapper::put(std::string url,
+		std::map<string, string> data) {
+	return this->base(url, &data, "PUT");
+}
+
+httpResponse CurlWrapper::del(std::string url,
+		std::map<string, string> data) {
+	return this->base(url, &data, "DELETE");
 }
 
